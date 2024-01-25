@@ -5,8 +5,15 @@ const DataContext = createContext({})
 
 export const api = {
    loadData: async () => {
-      const json = await fetch("/events.json")
-      return json.json()
+      try {
+         const json = await fetch("/events.json")
+         const data = await json.json()
+         console.log("Data loaded:", data)
+         return data
+      } catch (error) {
+         console.error("Error loading data:", error)
+         throw error
+      }
    },
 }
 

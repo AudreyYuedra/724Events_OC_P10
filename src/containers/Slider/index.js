@@ -22,8 +22,9 @@ const Slider = () => {
    return (
       <div className="SlideCardList">
          {byDateDesc?.map((event, idx) => (
-            <>
-               <div key={event.title} className={`SlideCard SlideCard--${index === idx ? "display" : "hide"}`}>
+            // remplacement balises vides par div + ajout key
+            <div key={event.title}>
+               <div className={`SlideCard SlideCard--${index === idx ? "display" : "hide"}`}>
                   <img src={event.cover} alt="forum" />
                   <div className="SlideCard__descriptionContainer">
                      <div className="SlideCard__description">
@@ -41,7 +42,7 @@ const Slider = () => {
                      ))}
                   </div>
                </div>
-            </>
+            </div>
          ))}
       </div>
    )

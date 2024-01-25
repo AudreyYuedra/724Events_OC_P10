@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react"
 import Form from "./index"
 
-describe("When Events is created", () => {
+describe("When Form is created", () => {
    it("a list of input is displayed", async () => {
       render(<Form />)
       await screen.findByText("Email")
@@ -14,6 +14,7 @@ describe("When Events is created", () => {
       it("the success action is called", async () => {
          const onSuccess = jest.fn()
          render(<Form onSuccess={onSuccess} />)
+         // simulation clic btn
          fireEvent(
             await screen.findByTestId("button-test-id"),
             new MouseEvent("click", {

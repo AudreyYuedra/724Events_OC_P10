@@ -7,23 +7,48 @@ import "./style.scss"
 const Slider = () => {
    const { data } = useData()
    const [index, setIndex] = useState(0)
-   // rajout ctrl pause slider (booléen)
+   const [pause, setPause] = useState(false)
+   let timer
 
    //* Ordre d'affichage en décroissant
    const byDateDesc = data?.focus.sort((evtA, evtB) => (new Date(evtA.date) > new Date(evtB.date) ? -1 : 1))
 
+   //* Défilement automatique
    const nextCard = () => {
-      //check si card est en pause avant de lancer nextcard
-      //if(pause)
-      setTimeout(() => setIndex(index < 2 ? index + 1 : byDateDesc.length - 3), 5000)
+      // setTimeout(() => setIndex(index < 2 ? index + 1 : byDateDesc.length - 3), 5000)
+      setIndex(index < 2 ? index + 1 : byDateDesc.length - 3)
+      clearTimeout(timer)
    }
 
-   // const handle => màj state pause => !state pause
-
    useEffect(() => {
-      //window.addEventListerner("keydown", handle)
-      nextCard()
-   }, [index /*state pause*/])
+      //* Défilement stop avec barre espace
+      const stopSlider = (e) => {
+         if (e.code === "Space" && !pause) {
+            setPause(true)
+            clearTimeout(timer) // défilement s'arrête
+         }
+      }
+
+      // Défilement stop annulé
+      const moveSlider = (e) => {
+         if (e.code === "Space" && pause) {
+            setPause(false)
+            timer = setTimeout(nextCard, 5000)
+         }
+      }
+
+      window.addEventListener("keydown", stopSlider)
+      window.addEventListener("keyup", moveSlider)
+      timer = setTimeout(nextCard, 5000)
+
+      return () => {
+         window.addEventListener("keydown", stopSlider)
+         window.addEventListener("keyup", moveSlider)
+         clearTimeout(timer)
+      }
+   }, [index, pause])
+
+   // nextCard()
 
    return (
       <div className="SlideCardList">

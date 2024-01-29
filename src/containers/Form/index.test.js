@@ -22,9 +22,11 @@ describe("When Form is created", () => {
                bubbles: true,
             })
          )
+
          await screen.findByText("En cours")
-         await screen.findByText("Envoyer")
          expect(onSuccess).toHaveBeenCalled()
+
+         await screen.findByText("Envoyer")
       })
    })
 })

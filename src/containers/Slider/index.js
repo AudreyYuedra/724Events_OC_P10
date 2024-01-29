@@ -7,17 +7,23 @@ import "./style.scss"
 const Slider = () => {
    const { data } = useData()
    const [index, setIndex] = useState(0)
+   // rajout ctrl pause slider (booléen)
 
    //* Ordre d'affichage en décroissant
    const byDateDesc = data?.focus.sort((evtA, evtB) => (new Date(evtA.date) > new Date(evtB.date) ? -1 : 1))
 
    const nextCard = () => {
+      //check si card est en pause avant de lancer nextcard
+      //if(pause)
       setTimeout(() => setIndex(index < 2 ? index + 1 : byDateDesc.length - 3), 5000)
    }
 
+   // const handle => màj state pause => !state pause
+
    useEffect(() => {
+      //window.addEventListerner("keydown", handle)
       nextCard()
-   })
+   }, [index /*state pause*/])
 
    return (
       <div className="SlideCardList">

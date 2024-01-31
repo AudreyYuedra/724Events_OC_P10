@@ -7,48 +7,37 @@ import "./style.scss"
 const Slider = () => {
    const { data } = useData()
    const [index, setIndex] = useState(0)
-   const [pause, setPause] = useState(false)
    let timer
 
    //* Ordre d'affichage en décroissant
    const byDateDesc = data?.focus.sort((evtA, evtB) => (new Date(evtA.date) > new Date(evtB.date) ? -1 : 1))
 
    //* Défilement automatique
+   const sliderLength = data?.focus?.length
    const nextCard = () => {
-      // setTimeout(() => setIndex(index < 2 ? index + 1 : byDateDesc.length - 3), 5000)
-      setIndex(index < 2 ? index + 1 : byDateDesc.length - 3)
-      clearTimeout(timer)
+      setIndex((prevIndex) => (sliderLength - 1 ? 0 : prevIndex + 1))
+   }
+
+   //* Stop défilement quand appuis sur spacebar
+   const handleKey = (event) => {
+      if (event.key === " ") {
+         clearTimeout(timer)
+      }
    }
 
    useEffect(() => {
-      //* Défilement stop avec barre espace
-      const stopSlider = (e) => {
-         if (e.code === "Space" && !pause) {
-            setPause(true)
-            clearTimeout(timer) // défilement s'arrête
-         }
-      }
-
-      // Défilement stop annulé
-      const moveSlider = (e) => {
-         if (e.code === "Space" && pause) {
-            setPause(false)
-            timer = setTimeout(nextCard, 5000)
-         }
-      }
-
-      window.addEventListener("keydown", stopSlider)
-      window.addEventListener("keyup", moveSlider)
+      //* Débute slider quand composant monté
       timer = setTimeout(nextCard, 5000)
 
+      //* Ajout event pour spacebar
+      window.addEventListener("keydown", handleKey)
+
+      //* Nettoie l'event + timeout quand composant démonté
       return () => {
-         window.addEventListener("keydown", stopSlider)
-         window.addEventListener("keyup", moveSlider)
+         window.removeEventListener("keydown", handleKey)
          clearTimeout(timer)
       }
-   }, [index, pause])
-
-   // nextCard()
+   }, [index, sliderLength])
 
    return (
       <div className="SlideCardList">

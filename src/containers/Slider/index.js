@@ -7,6 +7,7 @@ import "./style.scss"
 const Slider = () => {
    const { data } = useData()
    const [index, setIndex] = useState(0)
+   const [pause, setPause] = useState(false)
    let timer
 
    //* Ordre d'affichage en décroissant
@@ -15,12 +16,15 @@ const Slider = () => {
    //* Défilement automatique
    const sliderLength = data?.focus?.length
    const nextCard = () => {
-      setIndex((prevIndex) => (sliderLength - 1 ? 0 : prevIndex + 1))
+      setIndex((prevIndex) => (prevIndex === sliderLength - 1 ? 0 : prevIndex + 1))
    }
 
    //* Stop défilement quand appuis sur spacebar
    const handleKey = (event) => {
       if (event.key === " ") {
+         event.preventDefault()
+         setPause(!pause)
+         // console.log(pause)
          clearTimeout(timer)
       }
    }

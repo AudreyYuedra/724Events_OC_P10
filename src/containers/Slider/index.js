@@ -19,13 +19,13 @@ const Slider = () => {
       setIndex((prevIndex) => (prevIndex === sliderLength - 1 ? 0 : prevIndex + 1))
    }
 
-   //* Stop défilement quand appuis sur spacebar
-   const handleKey = (event) => {
+   //* Stop défilement quand appuit sur spacebar
+   const handleKeyOn = (event) => {
       if (event.key === " ") {
          event.preventDefault()
-         setPause(!pause)
-         // console.log(pause)
-         clearTimeout(timer)
+         // setPause(index)
+         // nextCard(pause)
+         // clearTimeout(timer)
       }
    }
 
@@ -33,13 +33,21 @@ const Slider = () => {
       //* Débute slider quand composant monté
       timer = setTimeout(nextCard, 5000)
 
-      //* Ajout event pour spacebar
-      window.addEventListener("keydown", handleKey)
-
-      //* Nettoie l'event + timeout quand composant démonté
       return () => {
-         window.removeEventListener("keydown", handleKey)
-         clearTimeout(timer)
+         console.log("état pause de base : ", pause)
+
+         //* Ajout event pour spacebar
+         window.addEventListener("keydown", (event) => {
+            handleKeyOn(event)
+            console.log("état pause après press : ", setPause())
+         })
+
+         //* Enlève event pour spacebar   (Nettoie l'event + timeout quand composant démonté)
+         window.removeEventListener("keydown", (event) => {
+            handleKeyOn(event)
+            console.log("état pause après repress : ", setPause())
+         })
+         clearTimeout(timer) // obligatoire pour défilement auto
       }
    }, [index, sliderLength])
 

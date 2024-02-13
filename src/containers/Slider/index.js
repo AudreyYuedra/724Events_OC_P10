@@ -8,7 +8,6 @@ const Slider = () => {
    const { data } = useData()
    const [index, setIndex] = useState(0)
    const [pause, setPause] = useState(false)
-   let timer
 
    //* Ordre d'affichage en décroissant
    const byDateDesc = data?.focus.sort((evtA, evtB) => (new Date(evtA.date) > new Date(evtB.date) ? -1 : 1))
@@ -16,40 +15,32 @@ const Slider = () => {
    //* Défilement automatique
    const sliderLength = data?.focus?.length
    const nextCard = () => {
-      setIndex((prevIndex) => (prevIndex === sliderLength - 1 ? 0 : prevIndex + 1))
+      if (!pause) {
+         setIndex((prevIndex) => (prevIndex === sliderLength - 1 ? 0 : prevIndex + 1))
+      }
    }
 
    //* Stop défilement quand appuit sur spacebar
    const handleKeyOn = (event) => {
       if (event.key === " ") {
          event.preventDefault()
-         // setPause(index)
-         // nextCard(pause)
-         // clearTimeout(timer)
+         setPause(!pause)
       }
    }
 
    useEffect(() => {
       //* Débute slider quand composant monté
-      timer = setTimeout(nextCard, 5000)
+      const timer = setTimeout(nextCard, 5000)
+
+      //* Ajout event pour spacebar
+      window.addEventListener("keydown", handleKeyOn)
 
       return () => {
-         console.log("état pause de base : ", pause)
-
-         //* Ajout event pour spacebar
-         window.addEventListener("keydown", (event) => {
-            handleKeyOn(event)
-            console.log("état pause après press : ", setPause())
-         })
-
          //* Enlève event pour spacebar   (Nettoie l'event + timeout quand composant démonté)
-         window.removeEventListener("keydown", (event) => {
-            handleKeyOn(event)
-            console.log("état pause après repress : ", setPause())
-         })
+         window.removeEventListener("keydown", handleKeyOn)
          clearTimeout(timer) // obligatoire pour défilement auto
       }
-   }, [index, sliderLength])
+   }, [index, sliderLength, pause]) // dépendance pour réaction au changement
 
    return (
       <div className="SlideCardList">
